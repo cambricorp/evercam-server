@@ -552,8 +552,8 @@ defmodule EvercamMedia.Snapshot.Storage do
   end
 
   defp parse_hour(year, month, day, time, timezone) do
-    month = String.rjust("#{month}", 2, ?0)
-    day = String.rjust("#{day}", 2, ?0)
+    month = String.pad_leading("#{month}", 2, "0")
+    day = String.pad_leading("#{day}", 2, "0")
 
     "#{year}-#{month}-#{day}T#{time}Z"
     |> Calendar.DateTime.Parse.rfc3339_utc
