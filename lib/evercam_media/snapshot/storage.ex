@@ -247,7 +247,7 @@ defmodule EvercamMedia.Snapshot.Storage do
       nil ->
         case HTTPoison.get(url, [], hackney: [pool: :seaweedfs_download_pool]) do
           {:ok, %HTTPoison.Response{status_code: 200, body: snapshot, headers: header}} ->
-            {_, last_modified_date} = List.last(header)
+            {_, last_modified_date} = List.keyfind(header, "Last-Modified", 0)
             thumbnail_timestamp =
               last_modified_date
               |> Timex.parse!("{RFC1123}")
