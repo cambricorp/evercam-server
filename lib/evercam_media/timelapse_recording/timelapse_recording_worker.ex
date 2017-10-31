@@ -1,4 +1,4 @@
-defmodule EvercamMedia.Snapshot.Worker do
+defmodule EvercamMedia.TimelapseRecording.TimelapseRecordingWorker do
   @moduledoc """
   Provides functions and workers for getting snapshots from the camera
 
@@ -13,7 +13,7 @@ defmodule EvercamMedia.Snapshot.Worker do
   ################
 
   @doc """
-  Start the Snapshot server for a given camera.
+  Start the timelapse recording server for a given camera.
   """
   def start_link(args) do
     GenStage.start_link(__MODULE__, args, name: args[:name])
@@ -35,21 +35,21 @@ defmodule EvercamMedia.Snapshot.Worker do
   end
 
   @doc """
-  Get the state of the camera worker.
+  Get the state of the timelapse recording worker.
   """
   def get_state(cam_server) do
     GenStage.call(cam_server, :get_state)
   end
 
   @doc """
-  Get the configuration of the camera worker.
+  Get the configuration of the timelapse recording worker.
   """
   def get_config(cam_server) do
     GenStage.call(cam_server, :get_camera_config)
   end
 
   @doc """
-  Update the configuration of the camera worker
+  Update the configuration of the timelapse recording worker
   """
   def update_config(cam_server, config) do
     GenStage.cast(cam_server, {:update_camera_config, config})
@@ -61,22 +61,18 @@ defmodule EvercamMedia.Snapshot.Worker do
   def get_snapshot(cam_server, {:poll, timestamp}) do
     GenStage.cast(cam_server, {:get_camera_snapshot, timestamp})
   end
-  def get_snapshot(cam_server, reply_to) do
-    timestamp = Calendar.DateTime.Format.unix(Calendar.DateTime.now_utc)
-    GenStage.cast(cam_server, {:get_camera_snapshot, timestamp, reply_to})
-  end
 
   ######################
   ## Server Callbacks ##
   ######################
 
   @doc """
-  Initialize the camera server
+  Initialize the timelapse recording server
   """
   def init(args) do
-    {:ok, snapshot_manager} = GenStage.start_link(EvercamMedia.Snapshot.DBHandler, :ok)
-    {:ok, poll_manager} = GenStage.start_link(EvercamMedia.Snapshot.PollHandler, :ok)
-    {:ok, poller} = EvercamMedia.Snapshot.Poller.start_link(args)
+    {:ok, snapshot_manager} = GenStage.start_link(EvercamMedia.TimelapseRecording.StorageHandler, :ok)
+    {:ok, poll_manager} = GenStage.start_link(EvercamMedia.TimelapseRecording.PollHandler, :ok)
+    {:ok, poller} = EvercamMedia.TimelapseRecording.Poller.start_link(args)
     args = Map.merge args, %{
       poller: poller,
       snapshot_manager: snapshot_manager,
@@ -86,21 +82,21 @@ defmodule EvercamMedia.Snapshot.Worker do
   end
 
   @doc """
-  Server callback for restarting camera poller
+  Server callback for restarting timelapse recording poller
   """
   def handle_call(:restart_camera_poller, _from, state) do
     {:reply, nil, [], state}
   end
 
   @doc """
-  Server callback for stopping camera poller
+  Server callback for stopping timelapse recording poller
   """
   def handle_call(:stop_camera_poller, _from, state) do
     {:reply, nil, [], state}
   end
 
   @doc """
-  Server callback for getting camera config
+  Server callback for getting timelapse recording config
   """
   def handle_call(:get_camera_config, _from, state) do
     {:reply, get_config_from_state(:config, state), [], state}
@@ -143,10 +139,10 @@ defmodule EvercamMedia.Snapshot.Worker do
   def handle_info({:camera_reply, result, timestamp, reply_to}, state) do
     case result do
       {:ok, image} ->
-        data = {state.name, timestamp, image}
+        data = {state.config.camera_exid, timestamp, image, state.config.bucket_path}
         GenStage.sync_info(state.snapshot_manager, {:got_snapshot, data})
       {:error, error} ->
-        data = {state.name, timestamp, error}
+        data = {state.config.camera_exid, timestamp, error}
         GenStage.sync_info(state.snapshot_manager, {:snapshot_error, data})
     end
     if is_pid(reply_to) do

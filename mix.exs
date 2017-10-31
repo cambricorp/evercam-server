@@ -4,7 +4,7 @@ defmodule EvercamMedia.Mixfile do
   def project do
     [app: :evercam_media,
      version: "1.0.1",
-     elixir: "~> 1.5.1",
+     elixir: "~> 1.5.2",
      elixirc_paths: elixirc_paths(Mix.env),
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -56,6 +56,10 @@ defmodule EvercamMedia.Mixfile do
     :html_sanitize_ex,
     :new_relic,
     :gen_stage,
+    :elixir_dropbox,
+    :ex_aws,
+    :configparser_ex,
+    :sweet_xml
   ]
 
   # Specifies which paths to compile per environment
@@ -64,7 +68,7 @@ defmodule EvercamMedia.Mixfile do
 
   defp deps do
     [
-      {:calendar, "~> 0.17.2"},
+      {:calendar, "~> 0.17.4"},
       {:comeonin, "~> 3.0.2"},
       {:con_cache, "~> 0.12.0"},
       {:cors_plug, "~> 1.2.1"},
@@ -74,7 +78,7 @@ defmodule EvercamMedia.Mixfile do
       {:ecto, "~> 2.1.4"},
       {:exrm, "~> 1.0.8"},
       {:geo, "~> 1.4"},
-      {:httpoison, "== 0.11.1", override: true},
+      {:httpoison, github: "ijunaid8989/httpoison", override: true},
       {:jsx, "~> 2.8.2", override: true},
       {:mailgun, github: "evercam/mailgun"},
       {:phoenix, "~> 1.3.0", override: true},
@@ -92,6 +96,11 @@ defmodule EvercamMedia.Mixfile do
       {:html_sanitize_ex, "~> 1.2.0"},
       {:new_relic, github: "azharmalik3/newrelic-elixir", override: true},
       {:gen_stage, "~> 0.11"},
+      {:poison, "~> 3.1.0", override: true},
+      {:elixir_dropbox, "~> 0.0.7"},
+      {:ex_aws, "~> 1.1.5"},
+      {:configparser_ex, "~> 0.2.1"},
+      {:sweet_xml, "~> 0.6", optional: true}
     ]
   end
 end

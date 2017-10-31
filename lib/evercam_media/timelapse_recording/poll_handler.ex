@@ -1,16 +1,15 @@
-defmodule EvercamMedia.Timelapse.PollHandler do
+defmodule EvercamMedia.TimelapseRecording.PollHandler do
   @moduledoc """
-  Provide functions to update timelapse worker config
+  TODO
   """
-  alias EvercamMedia.Timelapse.Poller
-
+  alias EvercamMedia.TimelapseRecording.Poller
   use GenStage
 
   def init(:ok) do
     {:producer_consumer, :ok}
   end
 
-  def handle_info({:update_timelapse_config, worker_state}, state) do
+  def handle_info({:update_camera_config, worker_state}, state) do
     Poller.update_config(worker_state.poller, worker_state)
     {:noreply, [], state}
   end

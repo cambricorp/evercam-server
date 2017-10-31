@@ -56,6 +56,7 @@ defmodule EvercamMediaWeb.CameraView do
         host: Camera.host(camera, "external"),
         http: %{
           port: Camera.port(camera, "external", "http"),
+          nvr_port: Camera.port(camera, "nvr", "http"),
           camera: Camera.external_url(camera, "http"),
           jpg: Camera.snapshot_url(camera, "jpg"),
           mjpg: Camera.snapshot_url(camera, "mjpg"),
@@ -83,6 +84,7 @@ defmodule EvercamMediaWeb.CameraView do
         },
       },
       cloud_recordings: cloud_recording(camera.cloud_recordings),
+      timelapse_recordings: timelapse_recording(camera.timelapse_recordings)
     }
   end
 
@@ -103,6 +105,16 @@ defmodule EvercamMediaWeb.CameraView do
       storage_duration: cloud_recording.storage_duration,
       status: cloud_recording.status,
       schedule: cloud_recording.schedule
+    }
+  end
+
+  defp timelapse_recording(nil), do: nil
+  defp timelapse_recording(timelapse_recording) do
+    %{
+      frequency: timelapse_recording.frequency,
+      storage_duration: timelapse_recording.storage_duration,
+      status: timelapse_recording.status,
+      schedule: timelapse_recording.schedule
     }
   end
 end

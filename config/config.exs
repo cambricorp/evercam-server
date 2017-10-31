@@ -38,6 +38,9 @@ config :logger, :console,
 config :evercam_media,
   hls_url: "http://localhost:8080/hls"
 
+config :elixir_dropbox,
+  upload_url: "https://content.dropboxapi.com/2/"
+
 config :evercam_media,
   storage_dir: "storage"
 
@@ -54,6 +57,11 @@ config :new_relic,
   application_name: System.get_env("NEWRELIC_APP_NAME"),
   license_key: System.get_env("NEWRELIC_LICENSE_KEY"),
   poll_interval: 60_000
+
+config :ex_aws,
+  access_key_id: System.get_env["AWS_ACCESS_KEY_ID"],
+  secret_access_key: System.get_env["SECRET_ACCESS_KEY"],
+  region: "eu-west-1"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
