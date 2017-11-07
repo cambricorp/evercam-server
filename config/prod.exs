@@ -97,7 +97,7 @@ config :evercam_media, EvercamMedia.Repo,
   socket_options: [keepalive: true],
   timeout: 60_000,
   pool_timeout: 60_000,
-  pool_size: 80,
+  pool_size: 5,
   lazy: false,
   ssl: true
 
@@ -107,6 +107,6 @@ config :evercam_media, EvercamMedia.SnapshotRepo,
   socket_options: [keepalive: true],
   timeout: 60_000,
   pool_timeout: 60_000,
-  pool_size: 100,
+  pool_size: 5,
   lazy: false,
   ssl: true
